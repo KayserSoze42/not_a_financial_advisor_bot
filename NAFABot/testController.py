@@ -14,7 +14,6 @@ userOS = UserCredentials(
     os.environ.get("REDDIT_PASSWORD"),
     os.environ.get("REDDIT_CLIENTID"),
     os.environ.get("REDDIT_SECRET"),
-    os.environ.get("STOCK_APIKEY"),
     os.environ.get("IMGUR_CLIENTID"),
     os.environ.get("IMGUR_SECRET")
 )
@@ -23,7 +22,6 @@ print(os.environ.get("REDDIT_USERNAME") +
       os.environ.get("REDDIT_PASSWORD") +
       os.environ.get("REDDIT_CLIENTID") +
       os.environ.get("REDDIT_SECRET") +
-      os.environ.get("STOCK_APIKEY") +
       os.environ.get("IMGUR_CLIENTID") +
       os.environ.get("IMGUR_SECRET"))
 
@@ -32,7 +30,6 @@ redditComment = Comment(tickerName, userOS)
 
 
 def init():
-
     print("Starting up")
 
     print(datetime.now().strftime("%Y-%m-%d %I:%M:%S: %p"))
@@ -41,12 +38,10 @@ def init():
 
 
 def mainLoop():
-
     schedule.every().day.at("15:30").do(marketUpdate)
 
 
 def marketUpdate():
-
     schedule.every(30).minutes.do(marketJob)
 
 
@@ -71,17 +66,15 @@ def marketJob():
 
     redditComment.post()
 
-
 if __name__ == "__main__":
 
     init()
 
     # Comment next line if you want to avoid auto posting
-    # marketJob()
+    print("Fetching initial data and posting for the first time\n " +
+          datetime.now(pytz.timezone("America/New_York")).strftime("%m-%d-%Y %I:%M:%S %p"))
+    marketJob()
 
     while True:
         schedule.run_pending()
         time.sleep(1)
-
-
-

@@ -4,6 +4,7 @@ from datetime import datetime
 
 import matplotlib.pyplot as pyplot
 import praw
+import pytz
 import requests
 import yfinance
 from imgurpython import ImgurClient
@@ -22,27 +23,21 @@ class Ticker:
         self.tickerVolume = ""
         self.tickerAPIData = ""
         self.tickerGraphData = ""
-        self.tickerURL = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=" \
-                         + self.tickerSymbol + "&apikey=" + user.getAPIKey()
+        self.tickerInstance = yfinance.download(self.tickerSymbol, period="1d")
 
-    def getResponse(self):
-        try:
-            return json.loads(requests.get(self.tickerURL).content)
-        except:
-            pass
+
 
     def updateTicker(self):
-        tickerAPIData = None
+        self.tickerInstance = yfinance.download(self.tickerSymbol, period="1d")
+        print(self.tickerInstance)
+        print(self.tickerInstance[datetime.now(pytz.timezone("America/New York")).strftime("%Y-%m-%d")])
 
-        while (tickerAPIData == None):
-            tickerAPIData = self.getResponse()
-
-        self.tickerLastRefresh = tickerAPIData["Meta Data"]["3. Last Refreshed"]
-        self.tickerOpen = tickerAPIData["Time Series (Daily)"][self.tickerLastRefresh]["1. open"]
-        self.tickerHigh = tickerAPIData["Time Series (Daily)"][self.tickerLastRefresh]["2. high"]
-        self.tickerLow = tickerAPIData["Time Series (Daily)"][self.tickerLastRefresh]["3. low"]
-        self.tickerClose = tickerAPIData["Time Series (Daily)"][self.tickerLastRefresh]["4. close"]
-        self.tickerVolume = tickerAPIData["Time Series (Daily)"][self.tickerLastRefresh]["6. volume"]
+        # self.tickerLastRefresh = tickerAPIData["Meta Data"]["3. Last Refreshed"]
+        # self.tickerOpen = tickerAPIData["Time Series (Daily)"][self.tickerLastRefresh]["1. open"]
+        # self.tickerHigh = tickerAPIData["Time Series (Daily)"][self.tickerLastRefresh]["2. high"]
+        # self.tickerLow = tickerAPIData["Time Series (Daily)"][self.tickerLastRefresh]["3. low"]
+        # self.tickerClose = tickerAPIData["Time Series (Daily)"][self.tickerLastRefresh]["4. close"]
+        # self.tickerVolume = tickerAPIData["Time Series (Daily)"][self.tickerLastRefresh]["6. volume"]
 
     def plotGraphs(self):
         # Plot for 1 day and save as graph1.png
