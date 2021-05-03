@@ -2,12 +2,11 @@ class UserCredentials:
 
 
 
-    def __init__(self, userName, passWord, clientID, clientSecret, userAPIKey, imgurID, imgurSecret):
+    def __init__(self, userName, passWord, clientID, clientSecret, imgurID, imgurSecret):
         self.userName = userName
         self.passWord = passWord
         self.clientID = clientID
         self.clientSecret = clientSecret
-        self.userAPIKey = userAPIKey
         self.imgurID = imgurID
         self.imgurSecret = imgurSecret
 
@@ -44,5 +43,3 @@ class UserCredentials:
     def getImgurSecret(self):
         return self.imgurSecret
 
-    def printData(self):
-        print(self.userName + "\n" + self.passWord + "\n" + self.clientID + "\n" + self.clientSecret)

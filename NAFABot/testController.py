@@ -18,13 +18,6 @@ userOS = UserCredentials(
     os.environ.get("IMGUR_SECRET")
 )
 
-print(os.environ.get("REDDIT_USERNAME") +
-      os.environ.get("REDDIT_PASSWORD") +
-      os.environ.get("REDDIT_CLIENTID") +
-      os.environ.get("REDDIT_SECRET") +
-      os.environ.get("IMGUR_CLIENTID") +
-      os.environ.get("IMGUR_SECRET"))
-
 mainTicker = Ticker(tickerName, userOS)
 redditComment = Comment(tickerName, userOS)
 
@@ -52,9 +45,10 @@ def marketJob():
     redditComment.addLine(datetime.now(pytz.timezone("America/New_York")).strftime("%m-%d-%Y %I:%M:%S %p"))
     redditComment.addLine("$" + mainTicker.tickerSymbol)
     redditComment.addLine("For Date: " + mainTicker.tickerLastRefresh)
-    redditComment.addLine("Close: $" + mainTicker.tickerClose)
-    redditComment.addLine("Open: $" + mainTicker.tickerOpen)
-    redditComment.addLine("Low/High: $" + mainTicker.tickerLow + "/$" + mainTicker.tickerHigh)
+    redditComment.addLine("Close: $" + str(mainTicker.tickerClose))
+    redditComment.addLine("Open: $" + str(mainTicker.tickerOpen))
+    redditComment.addLine("Low / High: $" + format(float(mainTicker.tickerLow), '{.4f}') + " / $" +
+                          format(float(mainTicker.tickerHigh), '{.4f}'))
     redditComment.addLine("Volume:" + "{:,}".format(int(mainTicker.tickerVolume)))
 
     mainTicker.plotGraphs()
@@ -65,6 +59,7 @@ def marketJob():
     print(redditComment.formattedText)
 
     redditComment.post()
+
 
 if __name__ == "__main__":
 

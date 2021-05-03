@@ -23,21 +23,19 @@ class Ticker:
         self.tickerVolume = ""
         self.tickerAPIData = ""
         self.tickerGraphData = ""
-        self.tickerInstance = yfinance.download(self.tickerSymbol, period="1d")
-
-
+        self.tickerInstance = yfinance.download(self.tickerSymbol, period="1d", prepost=True)
 
     def updateTicker(self):
-        self.tickerInstance = yfinance.download(self.tickerSymbol, period="1d")
-        print(self.tickerInstance)
-        print(self.tickerInstance[datetime.now(pytz.timezone("America/New York")).strftime("%Y-%m-%d")])
+        self.tickerInstance = yfinance.download(self.tickerSymbol, period="1d", prepost=True)
 
-        # self.tickerLastRefresh = tickerAPIData["Meta Data"]["3. Last Refreshed"]
-        # self.tickerOpen = tickerAPIData["Time Series (Daily)"][self.tickerLastRefresh]["1. open"]
-        # self.tickerHigh = tickerAPIData["Time Series (Daily)"][self.tickerLastRefresh]["2. high"]
-        # self.tickerLow = tickerAPIData["Time Series (Daily)"][self.tickerLastRefresh]["3. low"]
-        # self.tickerClose = tickerAPIData["Time Series (Daily)"][self.tickerLastRefresh]["4. close"]
-        # self.tickerVolume = tickerAPIData["Time Series (Daily)"][self.tickerLastRefresh]["6. volume"]
+        self.tickerAPIData = self.tickerInstance.values.tolist()
+        self.tickerLastRefresh = datetime.now(pytz.timezone("America/New_York")).strftime("%Y-%m-%d")
+
+        self.tickerOpen = self.tickerAPIData[0][0]
+        self.tickerClose = self.tickerAPIData[0][1]
+        self.tickerHigh = self.tickerAPIData[0][2]
+        self.tickerLow = self.tickerAPIData[0][3]
+        self.tickerVolume = self.tickerAPIData[0][5]
 
     def plotGraphs(self):
         # Plot for 1 day and save as graph1.png
