@@ -56,7 +56,17 @@ class Ticker:
             self.tickerChange = "+" + str(format(float((change / self.tickerClose) * 100), '.2f')) + "%"
 
     def getChange(self):
+        self.tickerChange = self.calculateChange(self.tickerClose, yfinance.download(self.tickerSymbol,
+                                                                                     period="5d").values.tolist()[3][3])
         return self.tickerChange
+
+    def calculateChange(self, current, previous):
+        if current == previous:
+            return "0%"
+        try:
+            return str((abs(current - previous) / previous) * 100.0) + "%"
+        except ZeroDivisionError:
+            return "%"
 
     def plotGraphs(self):
         # Plot for 1 day and save as graph1.png
@@ -182,8 +192,8 @@ class Comment:
                               + '[6M](' + self.imgurLinks["graph180.png"] + '), ' \
                               + '[1Y](' + self.imgurLinks["graph360.png"] + '), '
 
-        self.formattedText += "  \n ^Beep ^Bop, ^I'm ^a ^bot  \n [go on, git]" +\
+        self.formattedText += "  \n ^Beep ^Bop, ^I'm ^a ^bot  \n [go on, git]" + \
                               "(" + self.user.getGithub() + ") " \
-                              "[or else, join](" + self.user.getSubreddit() + ")  \n  "
+                                                            "[or else, join](" + self.user.getSubreddit() + ")  \n  "
 
         self.formattedText += str(self.signatureList[randint(0, len(self.signatureList) - 1)]) + "  \n"

@@ -50,11 +50,13 @@ def init():
 def marketUpdate():
     schedule.every(1).hour.do(marketJob)
 
+
 def printUpdate():
     print("Waiting for scheduled update. \nCurrent Time NY:" +
           datetime.now(pytz.timezone("America/New_York")).strftime("%m-%d-%Y %I:%M:%S %p") +
-            + "\nCurrent Time Local: " +
+          "\nCurrent Time Local: " +
           datetime.now().strftime("%m-%d-%Y %I:%M:%S %p"))
+
 
 def marketJob():
     mainTicker.updateTicker()
@@ -65,7 +67,9 @@ def marketJob():
     redditComment.addLine("For Date: " + mainTicker.tickerLastRefresh)
     redditComment.addLine("Close: $" + format(float(mainTicker.tickerClose), '.2f') + " / " + mainTicker.tickerChange)
     redditComment.addLine("Open: $" + format(float(mainTicker.tickerOpen), '.2f'))
-    redditComment.addLine("Low / High: $" + format(float(mainTicker.tickerLow), '.2f') + " / $" + format(float(mainTicker.tickerHigh), '.2f'))
+    redditComment.addLine(
+        "Low / High: $" + format(float(mainTicker.tickerLow), '.2f') + " / $" + format(float(mainTicker.tickerHigh),
+                                                                                       '.2f'))
     redditComment.addLine(str("Volume: " + "{:,}".format(int(mainTicker.tickerVolume))))
 
     mainTicker.plotGraphs()
