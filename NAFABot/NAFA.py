@@ -26,15 +26,18 @@ class Ticker:
         self.tickerInstance = yfinance.download(self.tickerSymbol, period="1d", prepost=True)
 
     def updateTicker(self):
+        self.tickerAPIData = []
+
         self.tickerInstance = yfinance.download(self.tickerSymbol, period="1d", prepost=True)
 
         self.tickerAPIData = self.tickerInstance.values.tolist()
+        print(self.tickerInstance)
         self.tickerLastRefresh = datetime.now(pytz.timezone("America/New_York")).strftime("%Y-%m-%d")
 
         self.tickerOpen = self.tickerAPIData[0][0]
-        self.tickerClose = self.tickerAPIData[0][1]
-        self.tickerHigh = self.tickerAPIData[0][2]
-        self.tickerLow = self.tickerAPIData[0][3]
+        self.tickerClose = self.tickerAPIData[0][3]
+        self.tickerHigh = self.tickerAPIData[0][1]
+        self.tickerLow = self.tickerAPIData[0][2]
         self.tickerVolume = self.tickerAPIData[0][5]
 
     def plotGraphs(self):
@@ -88,6 +91,8 @@ class Comment:
             username=user.getUsername(),
             password=user.getPassword()
         )
+
+        self.user = user
 
         self.imgurInstance = ImgurClient(user.getImgurID(), user.getImgurSecret())
         self.tickerName = tickerName
@@ -154,6 +159,6 @@ class Comment:
                               + '[6M](' + self.imgurLinks["graph180.png"] + '), ' \
                               + '[1Y](' + self.imgurLinks["graph360.png"] + '), '
 
-        self.formattedText += "  \n ^Beep Bop, I'm a bot  \n [go on, git]" \
-                              "(https://github.com/KayserSoze42/not_a_financial_advisor_bot) " \
-                              "[or else, join](https://www.reddit.com/r/not_an_advisor_bot/)  \n  "
+        self.formattedText += "  \n ^Beep ^Bop, ^I'm ^a ^bot  \n [go on, git]" +\
+                              "(" + self.user.getGithub() + ") " \
+                              "[or else, join](" + self.user.getSubreddit() + ")  \n  "

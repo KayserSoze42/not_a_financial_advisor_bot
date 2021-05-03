@@ -18,6 +18,9 @@ userOS = UserCredentials(
     os.environ.get("IMGUR_SECRET")
 )
 
+userOS.setGithub(os.environ.get("USER_GITHUB"))
+userOS.setSubreddit(os.environ.get("USER_SUBREDDIT"))
+
 mainTicker = Ticker(tickerName, userOS)
 redditComment = Comment(tickerName, userOS)
 
@@ -45,10 +48,10 @@ def marketJob():
     redditComment.addLine(datetime.now(pytz.timezone("America/New_York")).strftime("%m-%d-%Y %I:%M:%S %p"))
     redditComment.addLine("$" + mainTicker.tickerSymbol)
     redditComment.addLine("For Date: " + mainTicker.tickerLastRefresh)
-    redditComment.addLine("Close: $" + str(mainTicker.tickerClose))
-    redditComment.addLine("Open: $" + str(mainTicker.tickerOpen))
-    redditComment.addLine("Low / High: $" + format(float(mainTicker.tickerLow), '{.4f}') + " / $" +
-                          format(float(mainTicker.tickerHigh), '{.4f}'))
+    redditComment.addLine("Close: $" + format(float(mainTicker.tickerClose), '.2f'))
+    redditComment.addLine("Open: $" + format(float(mainTicker.tickerOpen), '.2f'))
+    redditComment.addLine("Low / High: $" + format(float(mainTicker.tickerLow), '.2f') + " / $" +
+                          format(float(mainTicker.tickerHigh), '.2f'))
     redditComment.addLine("Volume:" + "{:,}".format(int(mainTicker.tickerVolume)))
 
     mainTicker.plotGraphs()

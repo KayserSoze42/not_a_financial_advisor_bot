@@ -9,6 +9,8 @@ class UserCredentials:
         self.clientSecret = clientSecret
         self.imgurID = imgurID
         self.imgurSecret = imgurSecret
+        self.userGithub = ""
+        self.subreddit = ""
 
     def getUserNameAndPassword(self):
         print("Enter your Reddit Username")
@@ -21,6 +23,18 @@ class UserCredentials:
         self.clientID = input(">>")
         print("Enter your App Client Secret")
         self.clientSecret = input(">>")
+
+    def setGithub(self, url):
+        self.userGithub = url
+
+    def setSubreddit(self, url):
+        self.subreddit = url
+
+    def getGithub(self):
+        return self.userGithub
+
+    def getSubreddit(self):
+        return self.subreddit
 
     def getUsername(self):
         return self.userName
