@@ -15,6 +15,7 @@ class Ticker:
     def __init__(self, tickerSymbol, user):
         self.user = user
         self.tickerSymbol = tickerSymbol
+        self.tickerChange = ""
         self.tickerLastRefresh = ""
         self.tickerOpen = ""
         self.tickerHigh = ""
@@ -27,6 +28,7 @@ class Ticker:
 
     def updateTicker(self):
         self.tickerAPIData = []
+        self.tickerChange = ""
 
         self.tickerInstance = yfinance.download(self.tickerSymbol, period="1d", prepost=True)
 
@@ -40,9 +42,24 @@ class Ticker:
         self.tickerLow = self.tickerAPIData[0][2]
         self.tickerVolume = self.tickerAPIData[0][5]
 
+        if float(yfinance.download(self.tickerSymbol, period="5d").values.tolist()[3][4]) > self.tickerClose:
+            change = float(yfinance.download(self.tickerSymbol, period="5d").values.tolist()[3][4]) - \
+                     float(self.tickerClose)
+
+            self.tickerChange = "-" + str(format(float((change / self.tickerClose) * 100), '.2f')) + "%"
+
+        elif float(yfinance.download(self.tickerSymbol, period="5d").values.tolist()[3][4]) < self.tickerClose:
+            change = float(self.tickerClose) - float(yfinance.download(self.tickerSymbol,
+                                                                       period="5d").values.tolist()[3][4])
+
+            self.tickerChange = "+" + str(format(float((change / self.tickerClose) * 100), '.2f')) + "%"
+
+    def getChange(self):
+        return self.tickerChange
+
     def plotGraphs(self):
         # Plot for 1 day and save as graph1.png
-        self.tickerGraphData = yfinance.download(self.tickerSymbol, self.tickerLastRefresh)
+        self.tickerGraphData = yfinance.download(self.tickerSymbol, period="1d", interval="30m")
         self.tickerGraphData.Close.plot(color="green", linestyle="solid")
         self.saveGraph("graph1.png")
         pyplot.cla()
@@ -121,7 +138,7 @@ class Comment:
         self.formattedText += "    ╬══════════════════════  \n    "
 
         for line in self.text:
-            self.formattedText += "║{:^28}".format(line) + "  \n    "
+            self.formattedText += "║{:^35}".format(line) + "  \n    "
 
         self.formattedText += "╬══════════════════════  \n    "
 

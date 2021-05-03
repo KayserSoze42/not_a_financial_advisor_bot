@@ -28,13 +28,9 @@ redditComment = Comment(tickerName, userOS)
 def init():
     print("Starting up")
 
-    print(datetime.now().strftime("%Y-%m-%d %I:%M:%S: %p"))
+    print(datetime.now().strftime("%Y-%m-%d %I:%M:%S %p"))
 
-    mainLoop()
-
-
-def mainLoop():
-    schedule.every().day.at("15:30").do(marketUpdate)
+    marketUpdate()
 
 
 def marketUpdate():
@@ -48,11 +44,10 @@ def marketJob():
     redditComment.addLine(datetime.now(pytz.timezone("America/New_York")).strftime("%m-%d-%Y %I:%M:%S %p"))
     redditComment.addLine("$" + mainTicker.tickerSymbol)
     redditComment.addLine("For Date: " + mainTicker.tickerLastRefresh)
-    redditComment.addLine("Close: $" + format(float(mainTicker.tickerClose), '.2f'))
+    redditComment.addLine("Close: $" + format(float(mainTicker.tickerClose), '.2f') + " / " + mainTicker.tickerChange)
     redditComment.addLine("Open: $" + format(float(mainTicker.tickerOpen), '.2f'))
-    redditComment.addLine("Low / High: $" + format(float(mainTicker.tickerLow), '.2f') + " / $" +
-                          format(float(mainTicker.tickerHigh), '.2f'))
-    redditComment.addLine("Volume:" + "{:,}".format(int(mainTicker.tickerVolume)))
+    redditComment.addLine("Low / High: $" + format(float(mainTicker.tickerLow), '.2f') + " / $" + format(float(mainTicker.tickerHigh), '.2f'))
+    redditComment.addLine(str("Volume: " + "{:,}".format(int(mainTicker.tickerVolume))))
 
     mainTicker.plotGraphs()
 
