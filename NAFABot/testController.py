@@ -1,0 +1,84 @@
+import os
+import time
+from datetime import datetime
+
+import pytz
+import schedule
+
+from NAFA import Ticker, Comment
+from NAFAUser import UserCredentials
+
+tickerName = os.environ.get("STOCK_NAME")
+userOS = UserCredentials(
+    os.environ.get("REDDIT_USERNAME"),
+    os.environ.get("REDDIT_PASSWORD"),
+    os.environ.get("REDDIT_CLIENTID"),
+    os.environ.get("REDDIT_SECRET"),
+    os.environ.get("STOCK_APIKEY"),
+    os.environ.get("IMGUR_CLIENTID"),
+    os.environ.get("IMGUR_SECRET")
+)
+
+print(os.environ.get("REDDIT_USERNAME") +
+      os.environ.get("REDDIT_PASSWORD") +
+      os.environ.get("REDDIT_CLIENTID") +
+      os.environ.get("REDDIT_SECRET") +
+      os.environ.get("STOCK_APIKEY") +
+      os.environ.get("IMGUR_CLIENTID") +
+      os.environ.get("IMGUR_SECRET"))
+
+mainTicker = Ticker(tickerName, userOS)
+redditComment = Comment(tickerName, userOS)
+
+def init():
+
+    print("Starting up")
+
+
+def mainLoop():
+
+    schedule.every().day.at("15:30").do(marketUpdate)
+
+
+def marketUpdate():
+
+    schedule.every(30).minutes.do(marketJob)
+
+
+def marketJob():
+    mainTicker.updateTicker()
+
+    redditComment.addLine("Current Date and Time:")
+    redditComment.addLine(datetime.now(pytz.timezone("America/New_York")).strftime("%m-%d-%Y %I:%M:%S %p"))
+    redditComment.addLine("$" + mainTicker.tickerSymbol)
+    redditComment.addLine("For Date: " + mainTicker.tickerLastRefresh)
+    redditComment.addLine("Close: $" + mainTicker.tickerClose)
+    redditComment.addLine("Open: $" + mainTicker.tickerOpen)
+    redditComment.addLine("Low/High: $" + mainTicker.tickerLow + "/$" + mainTicker.tickerHigh)
+    redditComment.addLine("Volume:" + "{:,}".format(int(mainTicker.tickerVolume)))
+
+    mainTicker.plotGraphs()
+
+    redditComment.format()
+    redditComment.uploadGraphs()
+
+    print(redditComment.formattedText)
+
+    redditComment.post()
+
+
+if __name__ == "__main__":
+
+    print("here")
+
+    init()
+
+    # Comment next line if you want to avoid auto posting
+    marketJob()
+
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
+
+
+
