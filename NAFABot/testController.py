@@ -30,9 +30,14 @@ print(os.environ.get("REDDIT_USERNAME") +
 mainTicker = Ticker(tickerName, userOS)
 redditComment = Comment(tickerName, userOS)
 
+
 def init():
 
     print("Starting up")
+
+    print(datetime.now().strftime("%Y-%m-%d %I:%M:%S: %p"))
+
+    mainLoop()
 
 
 def mainLoop():
@@ -69,12 +74,10 @@ def marketJob():
 
 if __name__ == "__main__":
 
-    print("here")
-
     init()
 
     # Comment next line if you want to avoid auto posting
-    marketJob()
+    # marketJob()
 
     while True:
         schedule.run_pending()

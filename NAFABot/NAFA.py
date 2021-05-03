@@ -161,6 +161,6 @@ class Comment:
                               + '[6M](' + self.imgurLinks["graph180.png"] + '), ' \
                               + '[1Y](' + self.imgurLinks["graph360.png"] + '), '
 
-        self.formattedText += "  \n *Beep Bop, I'm a bot*  \n [go on, git]" \
+        self.formattedText += "  \n ^Beep Bop, I'm a bot  \n [go on, git]" \
                               "(https://github.com/KayserSoze42/not_a_financial_advisor_bot) " \
                               "[or else, join](https://www.reddit.com/r/not_an_advisor_bot/)  \n  "
