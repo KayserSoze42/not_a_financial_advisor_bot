@@ -8,6 +8,7 @@ import pytz
 import requests
 import yfinance
 from imgurpython import ImgurClient
+from random import randint
 
 
 class Ticker:
@@ -42,15 +43,15 @@ class Ticker:
         self.tickerLow = self.tickerAPIData[0][2]
         self.tickerVolume = self.tickerAPIData[0][5]
 
-        if float(yfinance.download(self.tickerSymbol, period="5d").values.tolist()[3][4]) > self.tickerClose:
-            change = float(yfinance.download(self.tickerSymbol, period="5d").values.tolist()[3][4]) - \
+        if float(yfinance.download(self.tickerSymbol, period="5d").values.tolist()[3][3]) > self.tickerClose:
+            change = float(yfinance.download(self.tickerSymbol, period="5d").values.tolist()[3][3]) - \
                      float(self.tickerClose)
 
             self.tickerChange = "-" + str(format(float((change / self.tickerClose) * 100), '.2f')) + "%"
 
-        elif float(yfinance.download(self.tickerSymbol, period="5d").values.tolist()[3][4]) < self.tickerClose:
+        elif float(yfinance.download(self.tickerSymbol, period="5d").values.tolist()[3][3]) < self.tickerClose:
             change = float(self.tickerClose) - float(yfinance.download(self.tickerSymbol,
-                                                                       period="5d").values.tolist()[3][4])
+                                                                       period="5d").values.tolist()[3][3])
 
             self.tickerChange = "+" + str(format(float((change / self.tickerClose) * 100), '.2f')) + "%"
 
@@ -59,31 +60,31 @@ class Ticker:
 
     def plotGraphs(self):
         # Plot for 1 day and save as graph1.png
-        self.tickerGraphData = yfinance.download(self.tickerSymbol, period="1d", interval="30m")
+        self.tickerGraphData = yfinance.download(self.tickerSymbol, period="1d", interval="1m")
         self.tickerGraphData.Close.plot(color="green", linestyle="solid")
         self.saveGraph("graph1.png")
         pyplot.cla()
 
         # Plot for 5 days and save as graph5.png
-        self.tickerGraphData = yfinance.download(self.tickerSymbol, period="5d")
+        self.tickerGraphData = yfinance.download(self.tickerSymbol, period="5d", interval="15m")
         self.tickerGraphData.Close.plot(color="green", linestyle="solid")
         self.saveGraph("graph5.png")
         pyplot.cla()
 
         # Plot for 1 month and save as graph30.png
-        self.tickerGraphData = yfinance.download(self.tickerSymbol, period="1mo")
+        self.tickerGraphData = yfinance.download(self.tickerSymbol, period="1mo", interval="1h")
         self.tickerGraphData.Close.plot(color="green", linestyle="solid")
         self.saveGraph("graph30.png")
         pyplot.cla()
 
         # Plot for 3 months and save as graph90.png
-        self.tickerGraphData = yfinance.download(self.tickerSymbol, period="3mo")
+        self.tickerGraphData = yfinance.download(self.tickerSymbol, period="3mo", interval="1h")
         self.tickerGraphData.Close.plot(color="green", linestyle="solid")
         self.saveGraph("graph90.png")
         pyplot.cla()
 
         # Plot for 6 months and save as graph180.png
-        self.tickerGraphData = yfinance.download(self.tickerSymbol, period="6mo")
+        self.tickerGraphData = yfinance.download(self.tickerSymbol, period="6mo", interval="1h")
         self.tickerGraphData.Close.plot(color="green", linestyle="solid")
         self.saveGraph("graph180.png")
         pyplot.cla()
@@ -111,6 +112,8 @@ class Comment:
 
         self.user = user
 
+        self.signatureList = []
+
         self.imgurInstance = ImgurClient(user.getImgurID(), user.getImgurSecret())
         self.tickerName = tickerName
         self.subreddit = self.redditInstance.subreddit("Superstonk")
@@ -125,6 +128,9 @@ class Comment:
         for submission in self.subreddit.hot(limit=10):
             if self.tickerName in submission.title and "Daily" in submission.title:
                 return submission
+
+    def setSignatureList(self, newList):
+        self.signatureList = newList
 
     def addLine(self, newLine):
         self.text.append(newLine)
@@ -179,3 +185,5 @@ class Comment:
         self.formattedText += "  \n ^Beep ^Bop, ^I'm ^a ^bot  \n [go on, git]" +\
                               "(" + self.user.getGithub() + ") " \
                               "[or else, join](" + self.user.getSubreddit() + ")  \n  "
+
+        self.formattedText += str(self.signatureList[randint(0, len(self.signatureList) - 1)]) + "  \n"

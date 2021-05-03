@@ -30,12 +30,31 @@ def init():
 
     print(datetime.now().strftime("%Y-%m-%d %I:%M:%S %p"))
 
+    redditComment.setSignatureList([
+        "^The ^Cake ^Is ^A ^Pie",
+        "^Check ^Your ^Posture!",
+        "*Tl;dr: 01101000 01101111 01100100 01101100*",
+        "^They ^Took ^Er ^Jobs!",
+        "^Ceci ^n'est ^pas ^une ^chat",
+        "^Tell ^me ^the ^difference ^between ^stupid ^and ^illegal ^and ^I'll ^have ^my ^wife's ^brother ^arrested.",
+        "Alexa play Money by Pink Floyd",
+        "Alexa play Feel Good Inc. by Gorillaz",
+        "Alexa play Lithium by Nirvana",
+        "Alexa play When the Levee Breaks by Led Zeppelin"
+    ])
+
     marketUpdate()
+    schedule.every(5).minutes.do(printUpdate)
 
 
 def marketUpdate():
-    schedule.every(30).minutes.do(marketJob)
+    schedule.every(1).hour.do(marketJob)
 
+def printUpdate():
+    print("Waiting for scheduled update. \nCurrent Time NY:" +
+          datetime.now(pytz.timezone("America/New_York")).strftime("%m-%d-%Y %I:%M:%S %p") +
+            + "\nCurrent Time Local: " +
+          datetime.now().strftime("%m-%d-%Y %I:%M:%S %p"))
 
 def marketJob():
     mainTicker.updateTicker()
