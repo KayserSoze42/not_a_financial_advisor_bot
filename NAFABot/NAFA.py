@@ -210,6 +210,6 @@ class Comment:
 
         self.formattedText += "  \n ^Beep ^Bop, ^I'm ^a ^bot  \n [go on, git]" + \
                               "(" + self.user.getGithub() + ") " \
-                                                            "[or else, join](" + self.user.getUserSubreddit() + ")  \n  "
+                                                            "[or else, join](" + self.user.getSubreddit() + ")  \n  "
 
         self.formattedText += str(self.signatureList[randint(0, len(self.signatureList) - 1)]) + "  \n"
