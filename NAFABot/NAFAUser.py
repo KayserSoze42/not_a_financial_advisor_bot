@@ -40,7 +40,7 @@ class UserCredentials:
         return self.userSubreddit
 
     def getSubreddit(self):
-        return  self.subreddit
+        return self.subreddit
 
     def getUsername(self):
         return self.userName

@@ -8,12 +8,6 @@ import schedule
 from NAFA import Ticker, Comment
 from NAFAUser import UserCredentials
 
-tickerName = "AAPL"
-userOS = UserCredentials("", "", "", "", "", "")
-mainTicker = Ticker(tickerName, userOS)
-redditComment = Comment(tickerName, userOS)
-userOS.setSubreddit("Superstonk")
-
 
 def setUpUserInfo():
 
@@ -29,11 +23,14 @@ def setUpUserInfo():
         )
 
         userOS.setGithub(os.environ.get("USER_GITHUB"))
-        userOS.setUserSubreddit(os.environ.get("USER_SUBREDDIT"))
-        userOS.setSubreddit(os.environ.get("TARGET_SUBREDDIT"))
+        userOS.setUserSubreddit(os.environ.get("TARGET_SUBREDDIT"))
+        userOS.setSubreddit(os.environ.get("USER_SUBREDDIT"))
 
         mainTicker = Ticker(tickerName, userOS)
         redditComment = Comment(tickerName, userOS)
+
+        print("**\nUSER INFO SET\n**")
+        return [mainTicker, redditComment]
     except:
         print("NAFA U - CONTROLLER ERROR: Unable to get User Info, Setting Up Default: NONE")
 
@@ -43,8 +40,11 @@ def init():
 
     print(datetime.now().strftime("%Y-%m-%d %I:%M:%S %p"))
 
-    setUpUserInfo()
-    print("**\nUSER INFO SET\n**")
+    instances = setUpUserInfo()
+
+    redditComment = instances[1]
+    mainTicker = instances[0]
+
 
     redditComment.setSignatureList([
         "^The ^Cake ^Is ^A ^Pie",
@@ -59,12 +59,16 @@ def init():
         "Alexa play When the Levee Breaks by Led Zeppelin"
     ])
 
-    marketUpdate()
+    marketUpdate(mainTicker, redditComment)
     schedule.every(5).minutes.do(printUpdate)
 
 
-def marketUpdate():
-    schedule.every(1).hour.do(marketJob)
+def marketUpdate(mainTicker, redditComment):
+    # Comment next line if you want to avoid auto posting
+    print("Fetching initial data and posting for the first time\n " +
+          datetime.now(pytz.timezone("America/New_York")).strftime("%m-%d-%Y %I:%M:%S %p"))
+    marketJob(mainTicker, redditComment)
+    schedule.every(1).hour.do(marketJob, mainTicker=mainTicker, redditComment=redditComment)
 
 
 def printUpdate():
@@ -74,7 +78,7 @@ def printUpdate():
           datetime.now().strftime("%m-%d-%Y %I:%M:%S %p"))
 
 
-def marketJob():
+def marketJob(mainTicker, redditComment):
     mainTicker.updateTicker()
 
     redditComment.addLine("Current Date and Time:")
@@ -99,13 +103,7 @@ def marketJob():
 
 
 if __name__ == "__main__":
-
     init()
-
-    # Comment next line if you want to avoid auto posting
-    print("Fetching initial data and posting for the first time\n " +
-          datetime.now(pytz.timezone("America/New_York")).strftime("%m-%d-%Y %I:%M:%S %p"))
-    marketJob()
 
     while True:
         schedule.run_pending()

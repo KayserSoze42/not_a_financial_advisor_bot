@@ -18,11 +18,11 @@ class Ticker:
         self.tickerSymbol = tickerSymbol
         self.tickerChange = ""
         self.tickerLastRefresh = ""
-        self.tickerOpen = ""
-        self.tickerHigh = ""
-        self.tickerLow = ""
-        self.tickerClose = ""
-        self.tickerVolume = ""
+        self.tickerOpen = 0
+        self.tickerHigh = 0
+        self.tickerLow = 0
+        self.tickerClose = 0
+        self.tickerVolume = 0
         self.tickerAPIData = ""
         self.tickerGraphData = ""
         try:
@@ -38,14 +38,14 @@ class Ticker:
             self.tickerInstance = yfinance.download(self.tickerSymbol, period="1d", prepost=True)
 
             self.tickerAPIData = self.tickerInstance.values.tolist()
-            print(self.tickerInstance)
-            self.tickerLastRefresh = str(self.tickerInstance.iloc[1].name.date())
+            self.tickerLastRefresh = str(self.tickerInstance.iloc[0].name.date())
 
             self.tickerOpen = self.tickerAPIData[0][0]
             self.tickerClose = self.tickerAPIData[0][3]
             self.tickerHigh = self.tickerAPIData[0][1]
             self.tickerLow = self.tickerAPIData[0][2]
             self.tickerVolume = self.tickerAPIData[0][5]
+
         except:
             print("NAFA ERROR: Unable to update ticker data")
 
@@ -82,7 +82,7 @@ class Ticker:
             pyplot.cla()
 
             # Plot for 5 days and save as graph5.png
-            self.tickerGraphData = yfinance.download(self.tickerSymbol, period="5d", interval="1m")
+            self.tickerGraphData = yfinance.download(self.tickerSymbol, period="5d", interval="1d")
             self.tickerGraphData.Close.plot(color="green", linestyle="solid")
             self.saveGraph("graph5.png")
             pyplot.cla()
@@ -120,32 +120,38 @@ class Ticker:
 class Comment:
 
     def __init__(self, tickerName, user):
-        self.redditInstance = praw.Reddit(
-            client_id=user.getClientID(),
-            client_secret=user.getClientSecret(),
-            user_agent="not_a_financial_advisor_bot",
-            username=user.getUsername(),
-            password=user.getPassword()
-        )
-
         self.user = user
+        try:
+            self.redditInstance = praw.Reddit(
+                client_id=user.getClientID(),
+                client_secret=user.getClientSecret(),
+                user_agent="not_a_financial_advisor_bot",
+                username=user.getUsername(),
+                password=user.getPassword()
+            )
+            self.imgurInstance = ImgurClient(user.getImgurID(), user.getImgurSecret())
+
+            self.subreddit = self.redditInstance.subreddit(user.getUserSubreddit())
+            self.dailyThread = self.getDailyThread()
+        except:
+            print("NAFA ERROR: Unable to set up Reddit and Imgur instance, check EV credentials")
+            self.imgurInstance = ImgurClient("n/a", "n/a")
+            self.subreddit = ""
+            self.dailyThread = ""
 
         self.signatureList = []
-
-        self.imgurInstance = ImgurClient(user.getImgurID(), user.getImgurSecret())
         self.tickerName = tickerName
-        self.subreddit = self.redditInstance.subreddit(user.getUserSubreddit())
-        self.dailyThread = self.getDailyThread()
-
         self.text = []
         self.formattedText = ""
-
         self.imgurLinks = {}
 
     def getDailyThread(self):
-        for submission in self.subreddit.hot(limit=10):
-            if self.tickerName in submission.title and "Daily" in submission.title:
-                return submission
+        try:
+            for submission in self.subreddit.hot(limit=10):
+                if self.tickerName in submission.title and "Daily" in submission.title:
+                    return submission
+        except:
+            print("NAFA ERROR: Unable to get daily thread from reddit")
 
     def setSignatureList(self, newList):
         self.signatureList = newList
@@ -169,28 +175,30 @@ class Comment:
     def post(self):
 
         try:
-            self.getDailyThread()
+            self.dailyThread = self.getDailyThread()
             self.dailyThread.reply(self.formattedText)
         except:
-            pass
+            print("NAFA ERROR: Unable to post to the daily thread")
 
     def uploadGraphs(self):
 
         self.imgurLinks = {}
-
         album = None
 
-        for file in os.listdir(os.getcwd() + "/graphs/"):
-            config = {
-                'album': album,
-                'name': datetime.now().strftime("%Y-%m-%d %I:%M %p"),
-                'title': datetime.now().strftime("%Y-%m-%d %I:%M %p"),
-                'description': 'Fresh Crayons Out Of The Street'
-            }
+        try:
+            for file in os.listdir(os.getcwd() + "/graphs/"):
+                config = {
+                    'album': album,
+                    'name': datetime.now().strftime("%Y-%m-%d %I:%M %p"),
+                    'title': datetime.now().strftime("%Y-%m-%d %I:%M %p"),
+                    'description': 'Fresh Crayons Out Of The Street'
+                }
 
-            image = self.imgurInstance.upload_from_path(os.getcwd() + "/graphs/" + file, config=config, anon=True)
+                image = self.imgurInstance.upload_from_path(os.getcwd() + "/graphs/" + file, config=config, anon=True)
 
-            self.imgurLinks[file] = image["link"]
+                self.imgurLinks[file] = image["link"]
+        except FileNotFoundError:
+            print("NAFA RW ERROR: Unable to find graph files and upload to Imgur")
 
         self.formattedText += "  \n"
         self.formattedText += 'Crayons: ' + '[1D](' + self.imgurLinks["graph1.png"] + '), ' \
