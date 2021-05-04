@@ -8,21 +8,34 @@ import schedule
 from NAFA import Ticker, Comment
 from NAFAUser import UserCredentials
 
-tickerName = os.environ.get("STOCK_NAME")
-userOS = UserCredentials(
-    os.environ.get("REDDIT_USERNAME"),
-    os.environ.get("REDDIT_PASSWORD"),
-    os.environ.get("REDDIT_CLIENTID"),
-    os.environ.get("REDDIT_SECRET"),
-    os.environ.get("IMGUR_CLIENTID"),
-    os.environ.get("IMGUR_SECRET")
-)
-
-userOS.setGithub(os.environ.get("USER_GITHUB"))
-userOS.setSubreddit(os.environ.get("USER_SUBREDDIT"))
-
+tickerName = "AAPL"
+userOS = UserCredentials("", "", "", "", "", "")
 mainTicker = Ticker(tickerName, userOS)
 redditComment = Comment(tickerName, userOS)
+userOS.setSubreddit("Superstonk")
+
+
+def setUpUserInfo():
+
+    try:
+        tickerName = os.environ.get("STOCK_NAME")
+        userOS = UserCredentials(
+            os.environ.get("REDDIT_USERNAME"),
+            os.environ.get("REDDIT_PASSWORD"),
+            os.environ.get("REDDIT_CLIENTID"),
+            os.environ.get("REDDIT_SECRET"),
+            os.environ.get("IMGUR_CLIENTID"),
+            os.environ.get("IMGUR_SECRET")
+        )
+
+        userOS.setGithub(os.environ.get("USER_GITHUB"))
+        userOS.setUserSubreddit(os.environ.get("USER_SUBREDDIT"))
+        userOS.setSubreddit(os.environ.get("TARGET_SUBREDDIT"))
+
+        mainTicker = Ticker(tickerName, userOS)
+        redditComment = Comment(tickerName, userOS)
+    except:
+        print("NAFA U - CONTROLLER ERROR: Unable to get User Info, Setting Up Default: NONE")
 
 
 def init():
@@ -30,13 +43,16 @@ def init():
 
     print(datetime.now().strftime("%Y-%m-%d %I:%M:%S %p"))
 
+    setUpUserInfo()
+    print("**\nUSER INFO SET\n**")
+
     redditComment.setSignatureList([
         "^The ^Cake ^Is ^A ^Pie",
         "^Check ^Your ^Posture!",
         "*Tl;dr: 01101000 01101111 01100100 01101100*",
         "^They ^Took ^Er ^Jobs!",
         "^Ceci ^n'est ^pas ^une ^chat",
-        "^Tell ^me ^the ^difference ^between ^stupid ^and ^illegal ^and ^I'll ^have ^my ^wife's ^brother ^arrested.",
+        "^Tell ^me ^the ^difference ^between ^stupid ^and ^illegal  \n ^and ^I'll ^have ^my ^wife's ^brother ^arrested.",
         "Alexa play Money by Pink Floyd",
         "Alexa play Feel Good Inc. by Gorillaz",
         "Alexa play Lithium by Nirvana",
