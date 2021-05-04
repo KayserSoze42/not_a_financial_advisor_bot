@@ -43,21 +43,16 @@ class Ticker:
         self.tickerLow = self.tickerAPIData[0][2]
         self.tickerVolume = self.tickerAPIData[0][5]
 
-        if float(yfinance.download(self.tickerSymbol, period="5d").values.tolist()[3][3]) > self.tickerClose:
-            change = float(yfinance.download(self.tickerSymbol, period="5d").values.tolist()[3][3]) - \
-                     float(self.tickerClose)
-
-            self.tickerChange = "-" + str(format(float((change / self.tickerClose) * 100), '.2f')) + "%"
-
-        elif float(yfinance.download(self.tickerSymbol, period="5d").values.tolist()[3][3]) < self.tickerClose:
-            change = float(self.tickerClose) - float(yfinance.download(self.tickerSymbol,
-                                                                       period="5d").values.tolist()[3][3])
-
-            self.tickerChange = "+" + str(format(float((change / self.tickerClose) * 100), '.2f')) + "%"
+        self.getChange()
 
     def getChange(self):
-        self.tickerChange = self.calculateChange(self.tickerClose, yfinance.download(self.tickerSymbol,
-                                                                                     period="5d").values.tolist()[3][3])
+        self.tickerChange = ""
+        try:
+            data = yfinance.download(self.tickerSymbol, period="5d", prepost=True).values.tolist()
+            self.tickerChange = self.calculateChange(data[4][3], data[3][3])
+        except:
+            print("NAFA ERROR: Unable to update change")
+
         return self.tickerChange
 
     def calculateChange(self, current, previous):
@@ -66,7 +61,7 @@ class Ticker:
         try:
             return str((abs(current - previous) / previous) * 100.0) + "%"
         except ZeroDivisionError:
-            return "%"
+            return "x%"
 
     def plotGraphs(self):
         # Plot for 1 day and save as graph1.png
@@ -76,31 +71,31 @@ class Ticker:
         pyplot.cla()
 
         # Plot for 5 days and save as graph5.png
-        self.tickerGraphData = yfinance.download(self.tickerSymbol, period="5d", interval="15m")
+        self.tickerGraphData = yfinance.download(self.tickerSymbol, period="5d", interval="5m")
         self.tickerGraphData.Close.plot(color="green", linestyle="solid")
         self.saveGraph("graph5.png")
         pyplot.cla()
 
         # Plot for 1 month and save as graph30.png
-        self.tickerGraphData = yfinance.download(self.tickerSymbol, period="1mo", interval="1h")
+        self.tickerGraphData = yfinance.download(self.tickerSymbol, period="1mo", interval="1d")
         self.tickerGraphData.Close.plot(color="green", linestyle="solid")
         self.saveGraph("graph30.png")
         pyplot.cla()
 
         # Plot for 3 months and save as graph90.png
-        self.tickerGraphData = yfinance.download(self.tickerSymbol, period="3mo", interval="1h")
+        self.tickerGraphData = yfinance.download(self.tickerSymbol, period="3mo", interval="1d")
         self.tickerGraphData.Close.plot(color="green", linestyle="solid")
         self.saveGraph("graph90.png")
         pyplot.cla()
 
         # Plot for 6 months and save as graph180.png
-        self.tickerGraphData = yfinance.download(self.tickerSymbol, period="6mo", interval="1h")
+        self.tickerGraphData = yfinance.download(self.tickerSymbol, period="6mo", interval="1d")
         self.tickerGraphData.Close.plot(color="green", linestyle="solid")
         self.saveGraph("graph180.png")
         pyplot.cla()
 
         # Plot for 1 year and save as graph360.png
-        self.tickerGraphData = yfinance.download(self.tickerSymbol, period="1y")
+        self.tickerGraphData = yfinance.download(self.tickerSymbol, period="1y", interval="1d")
         self.tickerGraphData.Close.plot(color="green", linestyle="solid")
         self.saveGraph("graph360.png")
         pyplot.cla()
