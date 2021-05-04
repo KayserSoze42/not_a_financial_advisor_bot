@@ -198,13 +198,14 @@ class Comment:
         except FileNotFoundError:
             print("NAFA RW ERROR: Unable to find graph files and upload to Imgur")
 
-        self.formattedText += "  \n"
-        self.formattedText += 'Crayons: ' + '[1D](' + self.imgurLinks["graph1.png"] + '), ' \
-                              + '[5D](' + self.imgurLinks["graph5.png"] + '), ' \
-                              + '[1M](' + self.imgurLinks["graph30.png"] + '), ' \
-                              + '[3M](' + self.imgurLinks["graph90.png"] + '), ' \
-                              + '[6M](' + self.imgurLinks["graph180.png"] + '), ' \
-                              + '[1Y](' + self.imgurLinks["graph360.png"] + '), '
+        if len(self.imgurLinks) > 0:
+            self.formattedText += "  \n"
+            self.formattedText += 'Crayons: ' + '[1D](' + self.imgurLinks["graph1.png"] + '), ' \
+                                  + '[5D](' + self.imgurLinks["graph5.png"] + '), ' \
+                                  + '[1M](' + self.imgurLinks["graph30.png"] + '), ' \
+                                  + '[3M](' + self.imgurLinks["graph90.png"] + '), ' \
+                                  + '[6M](' + self.imgurLinks["graph180.png"] + '), ' \
+                                  + '[1Y](' + self.imgurLinks["graph360.png"] + '), '
 
         self.formattedText += "  \n ^Beep ^Bop, ^I'm ^a ^bot  \n [go on, git]" + \
                               "(" + self.user.getGithub() + ") " \

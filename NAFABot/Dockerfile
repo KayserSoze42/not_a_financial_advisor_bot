@@ -7,6 +7,6 @@ WORKDIR /bot
 COPY requirements.txt requirements.txt
 RUN pip3 install -r requirements.txt
 
-COPY NAFA.py NAFAUser.py testController.py graphs .
+COPY NAFA.py NAFAUser.py testController.py graphs ./
 
-CMD["python3", "testController.py"]
+CMD [ "python3", "testController.py" ]
