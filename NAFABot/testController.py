@@ -62,7 +62,7 @@ def marketJob():
     mainTicker.updateTicker()
 
     redditComment.addLine("Current Date and Time:")
-    redditComment.addLine(datetime.now(pytz.timezone("America/New_York")).strftime("%m-%d-%Y %I:%M:%S %p"))
+    redditComment.addLine(datetime.now(pytz.timezone("America/New_York")).strftime("%Y-%m-%d %I:%M:%S %p"))
     redditComment.addLine("$" + mainTicker.tickerSymbol)
     redditComment.addLine("For Date: " + mainTicker.tickerLastRefresh)
     redditComment.addLine("Close: $" + format(float(mainTicker.tickerClose), '.2f') + " / " + mainTicker.tickerChange)

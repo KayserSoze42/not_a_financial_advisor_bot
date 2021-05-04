@@ -35,7 +35,7 @@ class Ticker:
 
         self.tickerAPIData = self.tickerInstance.values.tolist()
         print(self.tickerInstance)
-        self.tickerLastRefresh = datetime.now(pytz.timezone("America/New_York")).strftime("%Y-%m-%d")
+        self.tickerLastRefresh = self.tickerInstance.iloc[1].name.date()
 
         self.tickerOpen = self.tickerAPIData[0][0]
         self.tickerClose = self.tickerAPIData[0][3]
@@ -71,7 +71,7 @@ class Ticker:
         pyplot.cla()
 
         # Plot for 5 days and save as graph5.png
-        self.tickerGraphData = yfinance.download(self.tickerSymbol, period="5d", interval="5m")
+        self.tickerGraphData = yfinance.download(self.tickerSymbol, period="5d", interval="1m")
         self.tickerGraphData.Close.plot(color="green", linestyle="solid")
         self.saveGraph("graph5.png")
         pyplot.cla()

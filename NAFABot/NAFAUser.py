@@ -1,7 +1,5 @@
 class UserCredentials:
 
-
-
     def __init__(self, userName, passWord, clientID, clientSecret, imgurID, imgurSecret):
         self.userName = userName
         self.passWord = passWord
