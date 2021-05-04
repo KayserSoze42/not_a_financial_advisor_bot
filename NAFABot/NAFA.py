@@ -112,7 +112,7 @@ class Ticker:
             print("NAFA ERROR: Unable to fetch data and plot graphs")
 
     def saveGraph(self, name):
-        return pyplot.savefig("graphs/" + name)
+        return pyplot.savefig(os.getcwd() + "/graphs/" + name)
 
 
 class Comment:

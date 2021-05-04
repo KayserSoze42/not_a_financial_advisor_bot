@@ -72,7 +72,7 @@ def marketUpdate(mainTicker, redditComment):
 
 
 def printUpdate():
-    print("Waiting for scheduled update. \nCurrent Time NY:" +
+    print("Waiting for scheduled update. \nCurrent Time NY: " +
           datetime.now(pytz.timezone("America/New_York")).strftime("%m-%d-%Y %I:%M:%S %p") +
           "\nCurrent Time Local: " +
           datetime.now().strftime("%m-%d-%Y %I:%M:%S %p"))
