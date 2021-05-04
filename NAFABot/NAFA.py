@@ -1,11 +1,9 @@
-import json
 import os
 from datetime import datetime
 
 import matplotlib.pyplot as pyplot
 import praw
 import pytz
-import requests
 import yfinance
 from imgurpython import ImgurClient
 from random import randint

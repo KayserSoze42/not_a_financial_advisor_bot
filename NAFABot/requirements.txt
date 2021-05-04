@@ -1,0 +1,6 @@
+matplotlib
+schedule
+pytz
+praw
+imgurpython
+yfinance
