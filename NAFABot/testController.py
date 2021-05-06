@@ -22,9 +22,10 @@ def setUpUserInfo():
             os.environ.get("IMGUR_SECRET")
         )
 
-        userOS.setGithub(os.environ.get("USER_GITHUB"))
-        userOS.setUserSubreddit(os.environ.get("TARGET_SUBREDDIT"))
-        userOS.setSubreddit(os.environ.get("USER_SUBREDDIT"))
+        userOS.setUserGithub(os.environ.get("USER_GITHUB"))
+        userOS.setUserSubreddit(os.environ.get("USER_SUBREDDIT"))
+        userOS.setTargetSubreddit(os.environ.get("TARGET_SUBREDDIT"))
+
 
         mainTicker = Ticker(tickerName, userOS)
         redditComment = Comment(tickerName, userOS)

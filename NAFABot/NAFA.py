@@ -129,7 +129,7 @@ class Comment:
             )
             self.imgurInstance = ImgurClient(user.getImgurID(), user.getImgurSecret())
 
-            self.subreddit = self.redditInstance.subreddit(user.getUserSubreddit())
+            self.subreddit = self.redditInstance.subreddit(user.getTargetSubreddit())
             self.dailyThread = self.getDailyThread()
         except:
             print("NAFA ERROR: Unable to set up Reddit and Imgur instance, check EV credentials")
@@ -211,7 +211,7 @@ class Comment:
                                   + '[1Y](' + self.imgurLinks["graph360.png"] + '), '
 
         self.formattedText += "  \n ^Beep ^Bop, ^I'm ^a ^bot  \n [go on, git]" + \
-                              "(" + self.user.getGithub() + ") " \
-                                                            "[or else, join](" + self.user.getSubreddit() + ")  \n  "
+                              "(" + self.user.getUserGithub() + ") " \
+                                                            "[or else, join](" + self.user.getUserSubreddit() + ")  \n  "
 
         self.formattedText += str(self.signatureList[randint(0, len(self.signatureList) - 1)]) + "  \n"

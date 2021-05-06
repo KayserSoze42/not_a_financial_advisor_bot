@@ -8,8 +8,8 @@ class UserCredentials:
         self.imgurID = imgurID
         self.imgurSecret = imgurSecret
         self.userGithub = ""
+        self.targetSubreddit = ""
         self.userSubreddit = ""
-        self.subreddit = ""
 
 
     def getUserNameAndPassword(self):
@@ -24,23 +24,23 @@ class UserCredentials:
         print("Enter your App Client Secret")
         self.clientSecret = input(">>")
 
-    def setGithub(self, url):
+    def setUserGithub(self, url):
         self.userGithub = url
 
     def setUserSubreddit(self, url):
         self.userSubreddit = url
 
-    def setSubreddit(self, name):
-        self.subreddit = name
+    def setTargetSubreddit(self, name):
+        self.targetSubreddit = name
 
-    def getGithub(self):
+    def getUserGithub(self):
         return self.userGithub
 
     def getUserSubreddit(self):
         return self.userSubreddit
 
-    def getSubreddit(self):
-        return self.subreddit
+    def getTargetSubreddit(self):
+        return self.targetSubreddit
 
     def getUsername(self):
         return self.userName
