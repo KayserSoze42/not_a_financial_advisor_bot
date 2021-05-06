@@ -8,6 +8,8 @@ import schedule
 from NAFA import Ticker, Comment
 from NAFAUser import UserCredentials
 
+startMarketTime = ""
+intervalJobTime = ""
 
 def setUpUserInfo():
 
@@ -29,6 +31,9 @@ def setUpUserInfo():
         mainTicker = Ticker(tickerName, userOS)
         redditComment = Comment(tickerName, userOS)
 
+        startMarketTime = os.environ.get("BOT_START")
+        intervalJobTime = os.environ.get("BOT_INTERVAL")
+
         print("**\nUSER INFO SET\n**")
         return [mainTicker, redditComment]
     except:
@@ -45,41 +50,57 @@ def init():
     redditComment = instances[1]
     mainTicker = instances[0]
 
-
     redditComment.setSignatureList([
         "^The ^Cake ^Is ^A ^Pie",
+        "^HOLY ^MOLY",
+        "^74 ^6f ^20 ^74 ^68 ^65 ^20 ^6d ^6f ^6f ^6e ^21",
+        "^Good ^Morning ^Everyone!",
         "^Check ^Your ^Posture!",
-        "*Tl;dr: 01101000 01101111 01100100 01101100*",
-        "^They ^Took ^Er ^Jobs!",
+        "^Tl;dr: ^01101000 ^01101111 ^01100100 ^01101100",
         "^Ceci ^n'est ^pas ^une ^chat",
-        "^Tell ^me ^the ^difference ^between ^stupid ^and ^illegal  \n ^and ^I'll ^have ^my ^wife's ^brother ^arrested.",
+        "^Is ^This ^The ^Way?",
+        "^Tell ^me ^the ^difference ^between ^stupid ^and ^illegal ^and ^I'll ^have ^my ^wife's ^brother ^arrested.",
+        "^I ^came ^here ^to ^chew ^bubblegum ^and ^post ^data, ^but ^im ^all ^out ^of ^bubblegum",
         "Alexa play Money by Pink Floyd",
         "Alexa play Feel Good Inc. by Gorillaz",
         "Alexa play Lithium by Nirvana",
-        "Alexa play When the Levee Breaks by Led Zeppelin"
+        "Alexa play When the Levee Breaks by Led Zeppelin",
+        "Alexa play Tubthumping by Chumbawamba"
     ])
 
-    marketUpdate(mainTicker, redditComment)
-    schedule.every(5).minutes.do(printUpdate)
+    schedule.every().day.at(startMarketTime).do(marketUpdate, mainTicker=mainTicker, redditComment=redditComment)
+
 
 
 def marketUpdate(mainTicker, redditComment):
     # Comment next line if you want to avoid auto posting
-    print("Fetching initial data and posting for the first time\n " +
+    print("Fetching initial data and posting for the first time\n" +
           datetime.now(pytz.timezone("America/New_York")).strftime("%m-%d-%Y %I:%M:%S %p"))
     marketJob(mainTicker, redditComment)
-    schedule.every(1).hour.do(marketJob, mainTicker=mainTicker, redditComment=redditComment)
+
+    schedule.every(intervalJobTime).minutes.do(marketJob, mainTicker=mainTicker, redditComment=redditComment)
+    schedule.every(5).minutes.do(printUpdate, mainTicker=mainTicker, redditComment=redditComment)
 
 
-def printUpdate():
-    print("Waiting for scheduled update. \nCurrent Time NY: " +
+def printUpdate(mainTicker, redditComment):
+    print("\nWaiting for scheduled update. \nCurrent Time NY: " +
           datetime.now(pytz.timezone("America/New_York")).strftime("%m-%d-%Y %I:%M:%S %p") +
           "\nCurrent Time Local: " +
           datetime.now().strftime("%m-%d-%Y %I:%M:%S %p"))
 
+    if int(datetime.now(pytz.timezone("America/New_York")).strftime("%I")) >= 5:
+
+        print("\nMarket Closed, cancelling all jobs for today")
+        schedule.clear()
+        schedule.every().day.at(startMarketTime).do(marketUpdate, mainTicker=mainTicker, redditComment=redditComment)
+
 
 def marketJob(mainTicker, redditComment):
+    print("\nStarting Market Job\nUpdating Ticker Data")
+
     mainTicker.updateTicker()
+
+    print("\n***\nUPDATED\n***\n")
 
     redditComment.addLine("Current Date and Time:")
     redditComment.addLine(datetime.now(pytz.timezone("America/New_York")).strftime("%Y-%m-%d %I:%M:%S %p"))
@@ -92,14 +113,22 @@ def marketJob(mainTicker, redditComment):
                                                                                        '.2f'))
     redditComment.addLine(str("Volume: " + "{:,}".format(int(mainTicker.tickerVolume))))
 
+    print("\n Plotting Graphs\n")
+
     mainTicker.plotGraphs()
+
+    print("\n***\nDONE\n***\n")
 
     redditComment.format()
     redditComment.uploadGraphs()
 
+    print("\nFinishing Work And Printing\n")
+
     print(redditComment.formattedText)
 
     redditComment.post()
+
+    print("\n***\nDONE\n***\n")
 
 
 if __name__ == "__main__":

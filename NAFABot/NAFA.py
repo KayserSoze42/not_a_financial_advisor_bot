@@ -112,7 +112,7 @@ class Ticker:
             print("NAFA ERROR: Unable to fetch data and plot graphs")
 
     def saveGraph(self, name):
-        return pyplot.savefig(os.getcwd() + "/graphs/" + name)
+        return pyplot.savefig("graphs/" + name)
 
 
 class Comment:
@@ -175,6 +175,9 @@ class Comment:
         try:
             self.dailyThread = self.getDailyThread()
             self.dailyThread.reply(self.formattedText)
+
+            self.formattedText = ""
+            self.text = []
         except:
             print("NAFA ERROR: Unable to post to the daily thread")
 
