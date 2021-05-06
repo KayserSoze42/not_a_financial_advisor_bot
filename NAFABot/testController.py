@@ -1,12 +1,13 @@
 import os
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pytz
 import schedule
 
 from NAFA import Ticker, Comment
 from NAFAUser import UserCredentials
+
 
 def setUpUserInfo():
 
@@ -29,7 +30,7 @@ def setUpUserInfo():
         redditComment = Comment(tickerName, userOS)
 
         startMarketTime = os.environ.get("BOT_START")
-        intervalJobTime = os.environ.get("BOT_INTERVAL")
+        intervalJobTime = int(os.environ.get("BOT_INTERVAL"))
 
         print("**\nUSER INFO SET\n**")
         return [mainTicker, redditComment, startMarketTime, intervalJobTime]
@@ -61,27 +62,31 @@ def init():
         "^Tell ^me ^the ^difference ^between ^stupid ^and ^illegal ^and ^I'll ^have ^my ^wife's ^brother ^arrested.",
         "^I ^came ^here ^to ^chew ^bubblegum ^and ^post ^data, ^but ^im ^all ^out ^of ^bubblegum",
         "Alexa play Money by Pink Floyd",
-        "Alexa play Feel Good Inc. by Gorillaz",
+        "Alexa play Feel Good Inc by Gorillaz",
         "Alexa play Lithium by Nirvana",
         "Alexa play When the Levee Breaks by Led Zeppelin",
         "Alexa play Tubthumping by Chumbawamba"
     ])
 
-    schedule.every().day.at(startMarketTime).do(marketUpdate, mainTicker=mainTicker, redditComment=redditComment, intervalJobTime=intervalJobTime)
+    schedule.every().day.at(startMarketTime).do(marketUpdate, mainTicker=mainTicker, redditComment=redditComment, startMarketTime=startMarketTime, intervalJobTime=intervalJobTime)
+
+    print("Scheduled Successfully\n")
+    printNextPostDate(startTime=startMarketTime)
 
 
-
-def marketUpdate(mainTicker, redditComment, intervalJobTime):
+def marketUpdate(mainTicker, redditComment, startMarketTime, intervalJobTime):
     # Comment next line if you want to avoid auto posting
     print("Fetching initial data and posting for the first time\n" +
           datetime.now(pytz.timezone("America/New_York")).strftime("%m-%d-%Y %I:%M:%S %p"))
     marketJob(mainTicker, redditComment)
 
     schedule.every(intervalJobTime).minutes.do(marketJob, mainTicker=mainTicker, redditComment=redditComment)
-    schedule.every(5).minutes.do(printUpdate, mainTicker=mainTicker, redditComment=redditComment)
+    schedule.every(5).minutes.do(printUpdate, mainTicker=mainTicker, redditComment=redditComment, startMarketTime=startMarketTime, intervalJobTime=intervalJobTime)
 
 
-def printUpdate(mainTicker, redditComment):
+
+
+def printUpdate(mainTicker, redditComment, startMarketTime, intervalJobTime):
     print("\nWaiting for scheduled update. \nCurrent Time NY: " +
           datetime.now(pytz.timezone("America/New_York")).strftime("%m-%d-%Y %I:%M:%S %p") +
           "\nCurrent Time Local: " +
@@ -91,7 +96,10 @@ def printUpdate(mainTicker, redditComment):
 
         print("\nMarket Closed, cancelling all jobs for today")
         schedule.clear()
-        schedule.every().day.at(startMarketTime).do(marketUpdate, mainTicker=mainTicker, redditComment=redditComment)
+        schedule.every().day.at(startMarketTime).do(marketUpdate, mainTicker=mainTicker, redditComment=redditComment,
+                                                    startMarketTime=startMarketTime, intervalJobTime=intervalJobTime)
+
+    printNextPostDate()
 
 
 def marketJob(mainTicker, redditComment):
@@ -128,6 +136,27 @@ def marketJob(mainTicker, redditComment):
     redditComment.post()
 
     print("\n***\nDONE\n***\n")
+
+    printNextPostDate()
+
+
+def printNextPostDate(startTime=None):
+
+    currentDate = datetime.now()
+
+    if startTime is not None:
+        nextPostDate = currentDate.strftime("%Y-%m-%d ")
+        print("NEXT POST:\n" + nextPostDate + startTime + "\n")
+
+    elif currentDate.hour >= 5:
+        nextPostDate = currentDate + timedelta(days=1)
+        nextPostDate = nextPostDate.strftime("%Y-%m-%d")
+        print("NEXT POST:\n" + nextPostDate + "\n")
+
+    else:
+        nextPostDate = currentDate + timedelta(minutes=30)
+        nextPostDate = nextPostDate.strftime("%Y-%m-%d %I:%M:%S %p")
+        print("NEXT POST:\n" + nextPostDate + "\n")
 
 
 if __name__ == "__main__":
