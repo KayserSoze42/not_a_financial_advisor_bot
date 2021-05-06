@@ -8,9 +8,6 @@ import schedule
 from NAFA import Ticker, Comment
 from NAFAUser import UserCredentials
 
-startMarketTime = ""
-intervalJobTime = ""
-
 def setUpUserInfo():
 
     try:
@@ -35,7 +32,7 @@ def setUpUserInfo():
         intervalJobTime = os.environ.get("BOT_INTERVAL")
 
         print("**\nUSER INFO SET\n**")
-        return [mainTicker, redditComment]
+        return [mainTicker, redditComment, startMarketTime, intervalJobTime]
     except:
         print("NAFA U - CONTROLLER ERROR: Unable to get User Info, Setting Up Default: NONE")
 
@@ -49,6 +46,8 @@ def init():
 
     redditComment = instances[1]
     mainTicker = instances[0]
+    startMarketTime = instances[2]
+    intervalJobTime = instances[3]
 
     redditComment.setSignatureList([
         "^The ^Cake ^Is ^A ^Pie",
@@ -68,11 +67,11 @@ def init():
         "Alexa play Tubthumping by Chumbawamba"
     ])
 
-    schedule.every().day.at(startMarketTime).do(marketUpdate, mainTicker=mainTicker, redditComment=redditComment)
+    schedule.every().day.at(startMarketTime).do(marketUpdate, mainTicker=mainTicker, redditComment=redditComment, intervalJobTime=intervalJobTime)
 
 
 
-def marketUpdate(mainTicker, redditComment):
+def marketUpdate(mainTicker, redditComment, intervalJobTime):
     # Comment next line if you want to avoid auto posting
     print("Fetching initial data and posting for the first time\n" +
           datetime.now(pytz.timezone("America/New_York")).strftime("%m-%d-%Y %I:%M:%S %p"))
