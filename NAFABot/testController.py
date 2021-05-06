@@ -77,7 +77,8 @@ def init():
 
 def marketUpdate(mainTicker, redditComment, startMarketTime, intervalJobTime):
     # Comment next line if you want to avoid auto posting
-    print("Fetching initial data and posting for the first time\n" +
+    print("Fetching initial data and posting for the first time\nLocal Time:\n" +
+          datetime.now().strftime("%Y-%m-%d %I:%M:%S %p") + "\nUS Time:\n" +
           datetime.now(pytz.timezone("America/New_York")).strftime("%m-%d-%Y %I:%M:%S %p"))
     marketJob(mainTicker, redditComment)
 
@@ -85,22 +86,22 @@ def marketUpdate(mainTicker, redditComment, startMarketTime, intervalJobTime):
     schedule.every(5).minutes.do(printUpdate, mainTicker=mainTicker, redditComment=redditComment, startMarketTime=startMarketTime, intervalJobTime=intervalJobTime)
 
 
-
-
 def printUpdate(mainTicker, redditComment, startMarketTime, intervalJobTime):
+    currentDateUS = datetime.now(pytz.timezone("America/New_York"))
+
     print("\nWaiting for scheduled update. \nCurrent Time NY: " +
           datetime.now(pytz.timezone("America/New_York")).strftime("%m-%d-%Y %I:%M:%S %p") +
           "\nCurrent Time Local: " +
           datetime.now().strftime("%m-%d-%Y %I:%M:%S %p"))
 
-    if int(datetime.now(pytz.timezone("America/New_York")).strftime("%I")) >= 5:
+    if int(currentDateUS.strftime("%H")) >= 5 and currentDateUS.strftime("%p") == "PM":
 
         print("\nMarket Closed, cancelling all jobs for today")
         schedule.clear()
         schedule.every().day.at(startMarketTime).do(marketUpdate, mainTicker=mainTicker, redditComment=redditComment,
                                                     startMarketTime=startMarketTime, intervalJobTime=intervalJobTime)
 
-    printNextPostDate()
+    printNextPostDate(startTime=startMarketTime)
 
 
 def marketJob(mainTicker, redditComment):
@@ -144,15 +145,16 @@ def marketJob(mainTicker, redditComment):
 def printNextPostDate(startTime=None):
 
     currentDate = datetime.now()
+    currentDateUS = datetime.now(pytz.timezone("America/New_York"))
 
-    if startTime is not None:
-        nextPostDate = currentDate.strftime("%Y-%m-%d ")
-        print("NEXT POST:\n" + nextPostDate + startTime + "\n")
-
-    elif currentDate.hour >= 5:
+    if int(currentDateUS.strftime("%I")) >= 5 and currentDateUS.strftime("%p") == "PM":
         nextPostDate = currentDate + timedelta(days=1)
         nextPostDate = nextPostDate.strftime("%Y-%m-%d")
-        print("NEXT POST:\n" + nextPostDate + "\n")
+        print("NEXT POST:\n" + nextPostDate + startTime + "\n")
+
+    elif startTime is not None:
+        nextPostDate = currentDate.strftime("%Y-%m-%d ")
+        print("NEXT POST:\n" + nextPostDate + startTime + "\n")
 
     else:
         nextPostDate = currentDate + timedelta(minutes=30)
