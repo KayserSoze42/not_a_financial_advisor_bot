@@ -94,7 +94,7 @@ def printUpdate(mainTicker, redditComment, startMarketTime, intervalJobTime):
           "\nCurrent Time Local: " +
           datetime.now().strftime("%m-%d-%Y %I:%M:%S %p"))
 
-    if int(currentDateUS.strftime("%H")) >= 5 and currentDateUS.strftime("%p") == "PM":
+    if int(currentDateUS.strftime("%I")) >= 5 and currentDateUS.strftime("%p") == "PM":
 
         print("\nMarket Closed, cancelling all jobs for today")
         schedule.clear()
