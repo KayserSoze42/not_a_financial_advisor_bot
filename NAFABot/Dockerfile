@@ -4,10 +4,8 @@ FROM python:3.9-slim-buster
 
 WORKDIR /bot
 
-RUN mkdir graphs
-
 COPY requirements.txt requirements.txt
-RUN pip3 install -r requirements.txt
+RUN mkdir graphs && pip3 install -r requirements.txt
 
 COPY NAFA.py NAFAUser.py testController.py graphs ./
 
