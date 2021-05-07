@@ -56,13 +56,16 @@ def init():
         "^HOLY ^MOLY",
         "^74 ^6f ^20 ^74 ^68 ^65 ^20 ^6d ^6f ^6f ^6e ^21",
         "^Good ^Morning ^Everyone!",
+        "^Is ^mayonnaise ^an ^instrument?",
         "^Check ^Your ^Posture!",
         "^Tl;dr: ^01101000 ^01101111 ^01100100 ^01101100",
         "^Ceci ^n'est ^pas ^une ^chat",
         "^Is ^This ^The ^Way?",
         "^Tell ^me ^the ^difference ^between ^stupid ^and ^illegal ^and ^I'll ^have ^my ^wife's ^brother ^arrested.",
-        "^I ^came ^here ^to ^chew ^bubblegum ^and ^post ^data, ^but ^im ^all ^out ^of ^bubblegum",
+        "^I ^came ^here ^to ^chew ^bubblegum ^and ^post ^data, ^but ^I'm ^all ^out ^of ^bubblegum",
         "Alexa play Money by Pink Floyd",
+        "Alexa play The Blue Wrath by I Monster",
+        "Alexa play The Greenback Boogie by Ima Robot",
         "Alexa play Feel Good Inc by Gorillaz",
         "Alexa play Lithium by Nirvana",
         "Alexa play When the Levee Breaks by Led Zeppelin",
@@ -94,18 +97,17 @@ def printUpdate(mainTicker, redditComment, startMarketTime, intervalJobTime):
           "\nCurrent Time Local: " +
           datetime.now().strftime("%m-%d-%Y %I:%M:%S %p"))
 
-    if int(currentDateUS.strftime("%I")) >= 5 and currentDateUS.strftime("%p") == "PM":
+    if int(currentDateUS.strftime("%I")) >= 4 and int(currentDateUS.strftime("%M")) >= 30 and currentDateUS.strftime("%p") == "PM":
 
         print("\nMarket Closed, cancelling all jobs for today")
+        printNextPostDate(startTime=startMarketTime)
         schedule.clear()
         schedule.every().day.at(startMarketTime).do(marketUpdate, mainTicker=mainTicker, redditComment=redditComment,
                                                     startMarketTime=startMarketTime, intervalJobTime=intervalJobTime)
 
-    printNextPostDate(startTime=startMarketTime)
-
 
 def marketJob(mainTicker, redditComment):
-    print("\nStarting Market Job\nUpdating Ticker Data")
+    print("\nStarting Market Job\n\nUpdating Ticker Data")
 
     mainTicker.updateTicker()
 
@@ -122,7 +124,7 @@ def marketJob(mainTicker, redditComment):
                                                                                        '.2f'))
     redditComment.addLine(str("Volume: " + "{:,}".format(int(mainTicker.tickerVolume))))
 
-    print("\n Plotting Graphs\n")
+    print("\nPlotting Graphs\n")
 
     mainTicker.plotGraphs()
 
@@ -147,13 +149,14 @@ def printNextPostDate(startTime=None):
     currentDate = datetime.now()
     currentDateUS = datetime.now(pytz.timezone("America/New_York"))
 
-    if int(currentDateUS.strftime("%I")) >= 5 and currentDateUS.strftime("%p") == "PM":
+    if int(currentDateUS.strftime("%I")) >= 4 and int(currentDateUS.strftime("%M")) >= 30 \
+            and currentDateUS.strftime("%p") == "PM":
         nextPostDate = currentDate + timedelta(days=1)
-        nextPostDate = nextPostDate.strftime("%Y-%m-%d")
+        nextPostDate = nextPostDate.strftime("%Y-%m-%d ") + datetime.strptime(startTime, "%H:%M").strftime("%I:%M:%S %p")
         print("NEXT POST:\n" + nextPostDate + startTime + "\n")
 
     elif startTime is not None:
-        nextPostDate = currentDate.strftime("%Y-%m-%d ")
+        nextPostDate = currentDate.strftime("%Y-%m-%d ") + datetime.strptime(startTime, "%H:%M").strftime("%I:%M:%S %p")
         print("NEXT POST:\n" + nextPostDate + startTime + "\n")
 
     else:
