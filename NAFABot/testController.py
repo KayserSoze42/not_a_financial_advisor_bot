@@ -90,7 +90,7 @@ def marketUpdate(mainTicker, redditComment, startMarketTime, intervalJobTime):
           datetime.now(pytz.timezone("America/New_York")).strftime("%m-%d-%Y %I:%M:%S %p"))
     marketJob(mainTicker, redditComment, intervalJobTime)
 
-    schedule.every(intervalJobTime).minutes.do(marketJob, mainTicker=mainTicker, redditComment=redditComment, interval=intervalJobTime)
+    schedule.every(intervalJobTime).minutes.do(marketJob, mainTicker=mainTicker, redditComment=redditComment, intervalJobTime=intervalJobTime)
     schedule.every(5).minutes.do(printUpdate, mainTicker=mainTicker, redditComment=redditComment, startMarketTime=startMarketTime, intervalJobTime=intervalJobTime)
 
 
