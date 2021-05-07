@@ -57,6 +57,10 @@ def init():
         "^74 ^6f ^20 ^74 ^68 ^65 ^20 ^6d ^6f ^6f ^6e ^21",
         "^Good ^Morning ^Everyone!",
         "^Is ^mayonnaise ^an ^instrument?",
+        "^All ^your ^gains ^are ^belong ^to ^us",
+        "^Much ^wow",
+        "^Donde, ^está, ^la ^biblioteca. ^Me ^llamo ^T-Bone, ^la ^araña ^discoteca",
+        "^stonks",
         "^Check ^Your ^Posture!",
         "^Tl;dr: ^01101000 ^01101111 ^01100100 ^01101100",
         "^Ceci ^n'est ^pas ^une ^chat",
@@ -69,7 +73,8 @@ def init():
         "Alexa play Feel Good Inc by Gorillaz",
         "Alexa play Lithium by Nirvana",
         "Alexa play When the Levee Breaks by Led Zeppelin",
-        "Alexa play Tubthumping by Chumbawamba"
+        "Alexa play Tubthumping by Chumbawamba",
+        "Alexa play Time Is On My Side by The Rolling Stones"
     ])
 
     schedule.every().day.at(startMarketTime).do(marketUpdate, mainTicker=mainTicker, redditComment=redditComment, startMarketTime=startMarketTime, intervalJobTime=intervalJobTime)
@@ -83,9 +88,9 @@ def marketUpdate(mainTicker, redditComment, startMarketTime, intervalJobTime):
     print("Fetching initial data and posting for the first time\nLocal Time:\n" +
           datetime.now().strftime("%Y-%m-%d %I:%M:%S %p") + "\nUS Time:\n" +
           datetime.now(pytz.timezone("America/New_York")).strftime("%m-%d-%Y %I:%M:%S %p"))
-    marketJob(mainTicker, redditComment)
+    marketJob(mainTicker, redditComment, intervalJobTime)
 
-    schedule.every(intervalJobTime).minutes.do(marketJob, mainTicker=mainTicker, redditComment=redditComment)
+    schedule.every(intervalJobTime).minutes.do(marketJob, mainTicker=mainTicker, redditComment=redditComment, interval=intervalJobTime)
     schedule.every(5).minutes.do(printUpdate, mainTicker=mainTicker, redditComment=redditComment, startMarketTime=startMarketTime, intervalJobTime=intervalJobTime)
 
 
@@ -106,7 +111,7 @@ def printUpdate(mainTicker, redditComment, startMarketTime, intervalJobTime):
                                                     startMarketTime=startMarketTime, intervalJobTime=intervalJobTime)
 
 
-def marketJob(mainTicker, redditComment):
+def marketJob(mainTicker, redditComment, intervalJobTime):
     print("\nStarting Market Job\n\nUpdating Ticker Data")
 
     mainTicker.updateTicker()
@@ -141,10 +146,10 @@ def marketJob(mainTicker, redditComment):
 
     print("\n***\nDONE\n***\n")
 
-    printNextPostDate()
+    printNextPostDate(interval=intervalJobTime)
 
 
-def printNextPostDate(startTime=None):
+def printNextPostDate(startTime=None, interval=30):
 
     currentDate = datetime.now()
     currentDateUS = datetime.now(pytz.timezone("America/New_York"))
@@ -153,14 +158,14 @@ def printNextPostDate(startTime=None):
             and currentDateUS.strftime("%p") == "PM":
         nextPostDate = currentDate + timedelta(days=1)
         nextPostDate = nextPostDate.strftime("%Y-%m-%d ") + datetime.strptime(startTime, "%H:%M").strftime("%I:%M:%S %p")
-        print("NEXT POST:\n" + nextPostDate + startTime + "\n")
+        print("NEXT POST:\n" + nextPostDate + "\n")
 
     elif startTime is not None:
         nextPostDate = currentDate.strftime("%Y-%m-%d ") + datetime.strptime(startTime, "%H:%M").strftime("%I:%M:%S %p")
-        print("NEXT POST:\n" + nextPostDate + startTime + "\n")
+        print("NEXT POST:\n" + nextPostDate + "\n")
 
     else:
-        nextPostDate = currentDate + timedelta(minutes=30)
+        nextPostDate = currentDate + timedelta(minutes=interval)
         nextPostDate = nextPostDate.strftime("%Y-%m-%d %I:%M:%S %p")
         print("NEXT POST:\n" + nextPostDate + "\n")
 
