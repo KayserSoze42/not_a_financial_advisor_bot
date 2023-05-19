@@ -56,7 +56,7 @@ Example of NAFA modules usage:
                               
                               Comment.addLine(newLine : string)       - Add new line of text to the comment (inside the Box, to add bellow set signatures)
                               
-                              Ticker.plotGraphs()                     - Plot 1d,5d,1m,3m,6m,1y graphs using matplotlib.plyplot
+                              Ticker.plotGraphs()                     - Plot 1d,5d,1m,3m,6m,1y graphs using matplotlib.pyplot
                               
                               Comment.format()                        - Takes all of the lines added and formats them for the body of the box
                               
