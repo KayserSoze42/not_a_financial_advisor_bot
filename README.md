@@ -1,6 +1,32 @@
 # not_a_financial_advisor_bot
 Bot that fetches recent ticker info.  It formats the data and posts it on a thread during market hours. Also makes bad jokes 
 
+**-----BEGIN' UPDATE-----** 
+
+_With the current state of the "game", I feel a need to give this monster a proper semi-epitaph._
+
+_I lack the experience to feel the confidence and need to share my thoughts on the actions, so I'll do what I do best. Make jokes and roast my reasonings._
+
+_It was just a quickly put together memeMachine, made to spread data and joy, and I am more than thankful for all of the parties involved (especially "imports" behind scenes) to make such a silly thing possible._
+
+_I was able to (ab)use some math and plot some graphs, all while keeping in trend with the latest memez._
+
+_grep bless Python, the best of the worst and the worst of the best._
+
+_The community's movement is another thing I'm no comment, since investing is yet another abstract thing for me._
+
+_I am happy for the lolz and this is my reasoning:_
+
+_Monty Python may have introduced me to Python, but Darwin and Dawkins provided amemeunition._
+
+_P.S. You can see some [examples](https://www.reddit.com/r/Superstonk/comments/n9rsxg/comment/gxrmj3t/?utm_source=share&utm_medium=web2x&context=3) and its' evolution on my Reddit profile, which shares the name with my GitHub, oh what a reveal._
+
+_P.P.S. I would like to use this oportunity to also state that my other handle, OxieMoron, is in no way, shape or form affiliated with a certain furry handle/persona I have discovered on the first page of a Google search.. To think what truths second page actually hides._
+
+_I'm not judging, but I keep my rule69.zip hidden in a jpeg, where it belongs._
+
+**-----END UPDATE-----**
+
 To start the bot script use the Virtual Environment and start the testController.py
 
 It requires next Environment Variables to be set in order to work:
