@@ -25,6 +25,8 @@ _I'm not judging, but I keep my rule69.zip hidden in a jpeg, where it belongs._
 
 **-----END UPDATE-----**
 
+![$](https://github.com/KayserSoze42/not_a_financial_advisor_bot/blob/main/a.png?raw=true)
+
 To start the bot script use the Virtual Environment and start the testController.py
 
 It requires next Environment Variables to be set in order to work:
