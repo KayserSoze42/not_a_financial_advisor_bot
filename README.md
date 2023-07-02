@@ -15,7 +15,7 @@ _grep bless Python, the best of the worst and the worst of the best._
 
 _The community's movement is another thing I'm no comment, since investing is yet another abstract thing for me._
 
-_I am happy for the lolz because Monty Python may have introduced me to Python, but Darwin and Dawkins provided amemeunition._
+_I am happy for the lolz because Monty Python may have introduced me to Python, but it's Darwin and Dawkins who provided amemeunition._
 
 _P.S. You can see some [examples](https://www.reddit.com/r/Superstonk/comments/n9rsxg/comment/gxrmj3t/?utm_source=share&utm_medium=web2x&context=3) and its' evolution on my Reddit profile, which shares the name with my GitHub, oh what a reveal._
 
